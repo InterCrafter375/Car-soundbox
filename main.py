@@ -18,17 +18,7 @@ def tasklow():
     play(low)
     time.sleep(random.uniform(0.6, 4))
 
-
-
-cap = cv.VideoCapture(0)
-
-t1 = Thread(target=tasklow)
-t2 = Thread(target=tasklow)
-t3 = Thread(target=tasklow)
-t4 = Thread(target=tasklow)
-t5 = Thread(target=tasklow)
-
-while True:
+def play_sound():
     t1 = Thread(target=tasklow)
     t2 = Thread(target=tasklow)
     t3 = Thread(target=tasklow)
@@ -43,6 +33,9 @@ while True:
     t4.start()
     time.sleep(2)
 
+
+cap = cv.VideoCapture(0)
+
 cap.set(3, 1280)
 cap.set(4, 720)
 
@@ -55,10 +48,9 @@ cx = 1
 if not cap.isOpened():
     raise IOError("Cannot open webcam")
 
+charge_time = 0
+
 while True:
-
-
-
     ret, frame = cap.read()
     # frame = cv2.resize(frame, None, fx=1, fy=1, interpolation=cv2.INTER_AREA)
 
@@ -120,6 +112,15 @@ while True:
     cv.circle(out, (cx, cy), 7, (100, 100, 100), -1)
     cv.putText(out, "center", (cx - 20, cy - 20), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100, 100, 100), 2)
     print(f"x: {cx} y: {cy}")
+    if cx > 100:    #charge
+        charge_time += 1
+        print(charge_time)
+    if cx < 100:    #discharge
+        if charge_time > 10:
+            play_thread = Thread(target=play_sound)
+            play_thread.start()
+            charge_time = 0
+
 
 
 
