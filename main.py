@@ -10,6 +10,8 @@ from threading import Thread
 low = AudioSegment.from_wav("C:/Users/fneus/PycharmProjects/antilagsound/low.wav")
 high = AudioSegment.from_wav("C:/Users/fneus/PycharmProjects/antilagsound/high.wav")
 
+
+
 def taskhigh():
     play(high)
     time.sleep(random.uniform(0.6, 2))
@@ -19,11 +21,13 @@ def tasklow():
     time.sleep(random.uniform(0.6, 4))
 
 def play_sound():
+    print("fire")
     t1 = Thread(target=tasklow)
     t2 = Thread(target=tasklow)
     t3 = Thread(target=tasklow)
     t4 = Thread(target=tasklow)
     t5 = Thread(target=tasklow)
+    time.sleep(0.15)
     t1.start()
     time.sleep(0.05)
     t2.start()
@@ -33,13 +37,12 @@ def play_sound():
     t4.start()
     time.sleep(2)
 
-
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(1)
 
 cap.set(3, 1280)
 cap.set(4, 720)
 
-scale=300
+scale=5
 
 cy = 1
 cx = 1
@@ -49,6 +52,12 @@ if not cap.isOpened():
     raise IOError("Cannot open webcam")
 
 charge_time = 0
+
+t1 = Thread(target=tasklow)
+t2 = Thread(target=tasklow)
+t3 = Thread(target=tasklow)
+t4 = Thread(target=tasklow)
+t5 = Thread(target=tasklow)
 
 while True:
     ret, frame = cap.read()
@@ -64,7 +73,7 @@ while True:
     minY, maxY = centerY - radiusY, centerY + radiusY
 
     cropped = frame[minX:maxX, minY:maxY]
-    frame = cv.resize(cropped, (width, height))
+    frame = cv.resize(cropped, (640, 360))
 
     hls = cv.cvtColor(frame, cv.COLOR_BGR2HLS)  # convert
     h, l, s = cv.split(hls)  # split to h s v
@@ -111,12 +120,12 @@ while True:
 
     cv.circle(out, (cx, cy), 7, (100, 100, 100), -1)
     cv.putText(out, "center", (cx - 20, cy - 20), cv.FONT_HERSHEY_SIMPLEX, 0.5, (100, 100, 100), 2)
-    print(f"x: {cx} y: {cy}")
-    if cx > 100:    #charge
+    #print(f"x: {cx} y: {cy}")
+    if cx < 95:    #charge
         charge_time += 1
         print(charge_time)
-    if cx < 100:    #discharge
-        if charge_time > 10:
+    if cx > 107:    #discharge
+        if charge_time > 20:
             play_thread = Thread(target=play_sound)
             play_thread.start()
             charge_time = 0
